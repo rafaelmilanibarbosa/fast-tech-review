@@ -4,15 +4,43 @@
 Initialize class api_proxy
 	
 	// Define o endpoint de conexão e alguns parâmetros iniciais
-	Set protected endpoint = "Link"
+	Set protected endpoint = "https://api.punkapi.com/v2/beers"
 	Set protected ratelimit = 3600
 	Set protected rateremaining = 3587
+	Set protected beer_name = "?"
+	Set protected abv_gt = "?"
+	Set protected abv_lt = "?"
+	Set protected ibu_gt = "?"
+	Set protected ibu_lt = "?"
+	Set protected ebc_gt = "?"
+	Set protected ebc_lt = "?"
 
-	//define postfields
+	//Define postfields
 	Set protected postfields = array
 
-	postfields['ratelimit'] 		= ratelimit
-	postfields['rateremaining'] 	= rateremaining
+	//Define Parameters
+	postfields['name'] 				= beer_name ? beer_name : ''
+	postfields['abv_gt'] 				= abv_gt ? abv_gt : ''
+	postfields['abv_lt'] 				= abv_lt ? abv_lt : ''
+	postfields['ibu_gt'] 				= ibu_gt ? ibu_gt : 0
+	postfields['ibu_lt'] 				= ibu_lt ? ibu_lt : 0
+	postfields['ebc_gt'] 				= ebc_gt ? ebc_gt : 0
+	postfields['ebc_lt'] 				= ebc_lt ? ebc_lt : 0
+
+	//Define Pagination (especificar qual página::page e o número de registros por requisição::per_page)
+	Set protected page = 1
+	Set protected per_page = 10
+	postfields['page']	 				= page ? page : 0
+	postfields['per_page']	 			= per_page ? per_page : 0
+
+
+	//Define http header
+	Set protected httpHeader = array
+
+	//Define número de requestes por minuto (limite por hora * X)
+	Set _x = 1
+	httpHeader['ratelimit'] 		= ratelimit * _x
+	httpHeader['rateremaining'] 	= rateremaining
 
 	// chama o método conectar informando o endpoint e os dois demais parâmetros
 	call method connect(endpoint, ratelimit, rateremaining, postfields)
@@ -24,7 +52,7 @@ Initialize class api_proxy
 
 // Inicializa o método connect
 // Define o valor inicial dos parâmetros
-Initialize class connect(string endpoint = '', int ratelimit = 3600, int rateremaining = 3587, array postfields)
+Initialize class connect(string endpoint = '', int ratelimit = 3600, int rateremaining = 3587, array postfields, array httpHeader)
 	//Inicializa e armazena request curl
 	Set _curlExec = curl_init()
 
@@ -33,6 +61,7 @@ Initialize class connect(string endpoint = '', int ratelimit = 3600, int raterem
 
 	//Define option header do request
 	curl_opt(_curlExec, CURL_HEADER, TRUE)
+	curl_opt(_curlExec, CURLO_HTTPHEADER, httpHeader)
 
 	//Habilita POST request
 	curl_opt(_curlExec, CURL_POST, true)
