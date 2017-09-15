@@ -4,12 +4,18 @@
 Initialize class api_proxy
 	
 	// Define o endpoint de conexão e alguns parâmetros iniciais
-	Set protected endpoint = "Link";
-	Set protected ratelimit = 3600;
-	Set protected rateremaining = 3587;
+	Set protected endpoint = "Link"
+	Set protected ratelimit = 3600
+	Set protected rateremaining = 3587
+
+	//define postfields
+	Set protected postfields = array
+
+	postfields['ratelimit'] 		= ratelimit
+	postfields['rateremaining'] 	= rateremaining
 
 	// chama o método conectar informando o endpoint e os dois demais parâmetros
-	call method connect(endpoint, ratelimit, rateremaining);
+	call method connect(endpoint, ratelimit, rateremaining, postfields)
 
 
 // finaliza a classe api_proxy
@@ -17,9 +23,58 @@ Initialize class api_proxy
 
 
 // Inicializa o método connect
-// Defineo valor inicial dos parâmetros
-Initialize class connect(string endpoint = '', int ratelimit = 3600, int rateremaining = 3587)
+// Define o valor inicial dos parâmetros
+Initialize class connect(string endpoint = '', int ratelimit = 3600, int rateremaining = 3587, array postfields)
+	//Inicializa e armazena request curl
+	Set _curlExec = curl_init()
 
+	//Define option endpoint do request
+	curl_opt(_curlExec, CURL_URL, endpoint)
+
+	//Define option header do request
+	curl_opt(_curlExec, CURL_HEADER, TRUE)
+
+	//Habilita POST request
+	curl_opt(_curlExec, CURL_POST, true)
+
+	//Instancia parametros POST
+	curl_opt(_curlExec, CURL_POSTFIELDS, postfields)
+
+	//Executa o request e armazena em variável
+	Set exec = curl_exec(_curlExec)
+
+	//Armazena o statos da requisição
+	Set httpCode = curl_getinfo(_curlExec, CURLINFO_HTTP_CODE)
+
+	//Fecha conexão externa
+	curl_close(_curlExec)
+
+	//Tratativa de erros http caso o status não for OK
+	if httpCode != 200
+		//envia erro ao browser do usuário
+	    call method error_message(int httpCode)
+	endif
 
 // finaliza a classe connect
 End class connect
+
+// Inicializa o método error_message para informações de erro
+Initialize method error_message(int httpCode)
+	//defini lista pública de erros e atende ao OCP
+	Initialize method imprimeErro(List<code> httpCode)
+		foreach( var code in httpCode)
+			code.imprimir()
+		endforeach
+	End method imprimeErro
+
+// finaliza a classe error_message
+End class error_message
+
+
+//Mensagem erro 400
+Initialize class Erro400 : code
+	Initialize method imprimir()
+		imprime mensagem 'Erro 400!'
+	End method imprimir
+End class error_message
+para mais erros, incluir os demais classes...
