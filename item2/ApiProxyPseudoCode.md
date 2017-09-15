@@ -1,25 +1,25 @@
 ## API Proxy Pseudo Code ##
 
-_Inicializa a classe api_proxy_
+* Inicializa a classe api_proxy
 > Initialize class api_proxy
 	
-	_Define o endpoint de conexão e alguns parâmetros iniciais_
+	* Define o endpoint de conexão e alguns parâmetros iniciais
 	Set protected endpoint = "Link";
 	Set protected ratelimit = 3600;
 	Set protected rateremaining = 3587;
 
-	_chama o método conectar informando o endpoint e os dois demais parâmetros_
+	* chama o método conectar informando o endpoint e os dois demais parâmetros
 	call method connect(endpoint, ratelimit, rateremaining);
 
 
-_finaliza a classe api_proxy_
+* finaliza a classe api_proxy
 > End class api_proxy
 
 
-_Inicializa o método connect_
-_Defineo valor inicial dos parâmetros_
-> Initialize class connect(string _endpoint = '', int _ratelimit = 3600, int _rateremaining = 3587)
+* Inicializa o método connect
+* Defineo valor inicial dos parâmetros
+> Initialize class connect(string endpoint = '', int ratelimit = 3600, int rateremaining = 3587)
 
 
-_finaliza a classe connect_
+* finaliza a classe connect
 > End class connect
