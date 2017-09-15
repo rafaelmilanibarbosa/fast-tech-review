@@ -84,6 +84,12 @@ Initialize class connect(string endpoint = '', int ratelimit = 3600, int raterem
 	    call method error_message(int httpCode)
 	endif
 
+	//Armazena response em um objeto JSON
+	Set JSON ENCODE OBJECT exec
+
+	//imprime JSON para usuário
+	imprime json(exec)
+
 // finaliza a classe connect
 End class connect
 
